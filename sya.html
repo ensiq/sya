@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enhanced Text Animation</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: black;
+            font-size: 2em;
+            font-family: 'Arial', sans-serif;
+        }
+
+        #text-container {
+            position: absolute;
+            color: #ff4040; /* Красный оттенок текста */
+            font-family: 'Courier New', Courier, monospace;
+            text-shadow: 
+                0 0 5px #ff4040, 
+                0 0 10px #ff4040, 
+                0 0 15px #ff7070, 
+                0 0 20px #ff7070, 
+                0 0 30px #ff7070, 
+                0 0 40px #ff7070; /* Сильное свечение */
+            padding: 10px;
+            opacity: 1;
+            display: flex;
+            gap: 0.5em;
+        }
+
+        #flower-container {
+            position: absolute;
+            bottom: 10%;
+            width: 300px;
+            height: 300px;
+            opacity: 0;
+            transition: opacity 2s ease-in-out;
+        }
+
+        .visible {
+            opacity: 1;
+        }
+
+        .word {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="background"></canvas>
+    <div id="text-container"></div>
+    <img id="flower-container" src="https://example.com/bouquet.png" alt="Bouquet of Flowers" />
+
+    <script>
+        const texts = [
+            "Раз",
+            "Два",
+            "Три",
+            "Шынаренок",
+            "Цвети",
+            "🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸🌸",
+            "Қарашы көзіме бір",
+            "Асыл жаным",
+            "Жасырғаным жоқ",
+            "Жүрегімді саған тек",
+            "Тапсырамын",
+            "✨✨✨✨✨✨✨✨✨✨✨",
+            "Аххх да",
+            "Как такое забудешь",
+            "Где фото?) 😈"
+        ];
+
+        let index = 0;
+        const textContainer = document.getElementById('text-container');
+        const flowerContainer = document.getElementById('flower-container');
+
+        function displayWords(text) {
+            textContainer.innerHTML = ""; // Очищаем контейнер
+            const words = text.split(" ");
+            words.forEach((word, i) => {
+                const span = document.createElement("span");
+                span.className = "word";
+                span.textContent = word;
+                textContainer.appendChild(span);
+
+                // Плавное появление каждого слова
+                setTimeout(() => {
+                    span.style.opacity = 1;
+                }, i * 500); // Интервал для плавного появления слов
+            });
+        }
+
+        function changeText() {
+            if (index < texts.length) {
+                displayWords(texts[index]);
+                index++;
+            } else {
+                // Показать букет цветов после последнего текста
+                flowerContainer.classList.add('visible');
+                index = 0;
+            }
+        }
+
+        setInterval(changeText, 3000); // Смена текста каждые 3 секунды
+        changeText();
+
+        // Анимация звездного фона и падающих звезд
+        const canvas = document.getElementById('background');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const stars = Array(200).fill().map(() => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 2,
+            speed: Math.random() * 0.5 + 0.5,
+            color: `rgba(100, 149, 237, 0.8)`, // Синий оттенок звезд
+        }));
+
+        const shootingStars = [];
+
+        function createShootingStar() {
+            const shootingStar = {
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height / 2,
+                radius: Math.random() * 3 + 1, // Радиус для округлой формы
+                speedX: Math.random() * 5 + 3, // Горизонтальная скорость
+                speedY: Math.random() * 3 + 1, // Вертикальная скорость
+                opacity: 1
+            };
+            shootingStars.push(shootingStar);
+        }
+
+        setInterval(createShootingStar, 2000); // Создаем падающую звезду каждые 2 секунды
+
+        function animateStars() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Рисуем фоновые звезды
+            stars.forEach(star => {
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
+                ctx.fillStyle = star.color;
+                ctx.fill();
+
+                star.y += star.speed;
+                if (star.y > canvas.height) {
+                    star.y = 0;
+                    star.x = Math.random() * canvas.width;
+                }
+            });
+
+            // Анимация падающих звезд
+            for (let i = shootingStars.length - 1; i >= 0; i--) {
+                const star = shootingStars[i];
+                ctx.beginPath();
+                ctx.arc(star.x, star.y, star.radius, 0, Math.PI * 2); // Закругленная форма
+                ctx.fillStyle = `rgba(100, 149, 237, ${star.opacity})`; // Синий цвет
+                ctx.fill();
+
+                star.x += star.speedX;
+                star.y += star.speedY;
+                star.opacity -= 0.02;
+
+                if (star.opacity <= 0) {
+                    shootingStars.splice(i, 1);
+                }
+            }
+
+            requestAnimationFrame(animateStars);
+        }
+
+        animateStars();
+    </script>
+</body>
+</html>
