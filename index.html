@@ -14,8 +14,8 @@
             align-items: center;
             height: 100vh;
             background-color: black;
-            font-size: 2em;
             font-family: 'Arial', sans-serif;
+            font-size: 2em; /* Используем относительные единицы для шрифта */
         }
 
         #text-container {
@@ -33,6 +33,8 @@
             opacity: 1;
             display: flex;
             gap: 0.5em;
+            max-width: 90%; /* Ограничиваем ширину на больших экранах */
+            text-align: center; /* Центрируем текст */
         }
 
         #flower-container {
@@ -59,6 +61,38 @@
             left: 0;
             width: 100%;
             height: 100%;
+        }
+
+        /* Медиазапросы для мобильных устройств */
+        @media (max-width: 768px) {
+            body, html {
+                font-size: 1.5em; /* Уменьшаем шрифт для мобильных */
+            }
+
+            #text-container {
+                font-size: 5vw; /* Размер шрифта зависит от ширины экрана */
+                padding: 5px; /* Меньше отступов */
+            }
+
+            #flower-container {
+                width: 200px; /* Уменьшаем размер картинки на мобильных */
+                height: 200px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body, html {
+                font-size: 1.2em; /* Ещё меньше шрифт на очень маленьких экранах */
+            }
+
+            #text-container {
+                font-size: 8vw; /* На маленьких экранах размер шрифта ещё больше */
+            }
+
+            #flower-container {
+                width: 150px; /* Уменьшаем размер картинки */
+                height: 150px;
+            }
         }
     </style>
 </head>
